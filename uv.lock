@@ -138,12 +138,14 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi", extra = ["standard"] },
+    { name = "fastapi-swagger-ui-theme" },
     { name = "sqlalchemy" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["standard"], specifier = ">=0.142.2" },
+    { name = "fastapi-swagger-ui-theme", specifier = ">=0.1.0" },
     { name = "sqlalchemy", specifier = ">=2.1.3" },
 ]
 
@@ -186,6 +188,18 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/c0/8a/2857421c2218426e9f7635f9796e4e4bb41116b4b96d2fdf0cf8ed9ab5ae/fastapi_cloud_cli-0.26.0.tar.gz", hash = "sha256:5fd64c26228c8ead803461e8b58ae64ffd586e960d97ab1fc848efac2d9539be", size = 126180, upload-time = "2026-09-10T16:52:14.522Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/30/96/0e527b3aa93c0ade8b4edc959eb064df49f816469d4781312374b4ce1bab/fastapi_cloud_cli-0.26.0-py3-none-any.whl", hash = "sha256:94029f92f3dc4289b376e1213f0d6cc7c30d4f32de7e47b5effc6dc754ab9ce9", size = 108653, upload-time = "2026-09-10T16:52:13.493Z" },
+]
+
+[[package]]
+name = "fastapi-swagger-ui-theme"
+version = "0.1.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "fastapi" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b8/fe/f399e6738aff9f110444b8dbfea26eb378b1e1e9b12113db510d64e170b9/fastapi_swagger_ui_theme-0.1.0.tar.gz", hash = "sha256:0c1dfbdb83d1a189a2fca795f077e2f4789f259cf9c229e7e71d656c53d1fea5", size = 36300, upload-time = "2026-02-03T12:06:51.929Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/96/6b/708d64b24a34c8b734c1cd720035270b0708af997f2d1f01cf4806427af0/fastapi_swagger_ui_theme-0.1.0-py3-none-any.whl", hash = "sha256:30252d6473a04f0a8ac360a2b382aab90828e597083010e686ba7fa84a0d73c0", size = 37027, upload-time = "2026-02-03T12:06:50.575Z" },
 ]
 
 [[package]]

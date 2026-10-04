@@ -6,6 +6,7 @@ from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
+from fastapi_swagger_ui_theme import setup_swagger_ui_theme
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from starlette.exceptions import HTTPException as StarletteHTTPException
@@ -17,7 +18,9 @@ from .schemas import PostCreate, PostResponse, UserCreate, UserResponse
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI()
+# 1. Disable the default documentation URL add dark theme
+app = FastAPI(docs_url=None)
+setup_swagger_ui_theme(app, docs_path="/docs")
 
 app.mount(
     "/media",
