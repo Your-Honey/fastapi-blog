@@ -16,9 +16,14 @@ class PostResponse(PostBase):
     model_config = ConfigDict(from_attributes=True)
 
     id: int
-    user_id:int
+    user_id: int
     date_posted: datetime
     author: UserResponse
+
+
+class PostUpdate(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=50)
+    content: str | None = Field(default=None, min_length=1)
 
 
 class UserBase(BaseModel):
@@ -33,6 +38,10 @@ class UserCreate(UserBase):
 class UserResponse(UserBase):
     model_config = ConfigDict(from_attributes=True)
 
-    id:int
-    image_file:str | None
-    image_path:str
+    id: int
+    image_file: str | None
+    image_path: str
+
+class UserUpdate(BaseModel):
+    username : str | None = Field(default=None,min_length=1, max_length=50)
+    email: EmailStr | None = Field(default=None,max_length=120)

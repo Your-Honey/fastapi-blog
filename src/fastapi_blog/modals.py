@@ -1,7 +1,9 @@
-from .database import Base
+from datetime import UTC, datetime
+
 from sqlalchemy import DateTime, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import UTC, datetime
+
+from .database import Base
 
 
 class User(Base):
@@ -16,7 +18,9 @@ class User(Base):
         String(200), nullable=True, default=None
     )
 
-    posts: Mapped[list[Post]] = relationship(back_populates="author")
+    posts: Mapped[list[Post]] = relationship(
+        back_populates="author", cascade="all, delete-orphan"
+    )
 
     @property
     def image_path(self) -> str:
@@ -42,4 +46,4 @@ class Post(Base):
         DateTime(timezone=True), default=lambda: datetime.now(UTC)
     )
 
-    author:Mapped[User]=relationship(back_populates='posts')
+    author: Mapped[User] = relationship(back_populates="posts")

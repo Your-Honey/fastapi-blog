@@ -14,7 +14,14 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 from fastapi_blog import modals
 
 from .database import Base, engine, get_db
-from .schemas import PostCreate, PostResponse, UserCreate, UserResponse
+from .schemas import (
+    PostCreate,
+    PostResponse,
+    PostUpdate,
+    UserCreate,
+    UserResponse,
+    UserUpdate,
+)
 
 Base.metadata.create_all(bind=engine)
 
@@ -58,6 +65,34 @@ def create_post(post: PostCreate, db: Annotated[Session, Depends(get_db)]):
     db.add(new_post)
     db.commit()
     return new_post
+
+
+@app.patch("/api/posts/{post_id}", response_model=PostResponse)
+def post_update(
+    post_id: int, post_body: PostUpdate, db: Annotated[Session, Depends(get_db)]
+):
+    result = db.execute(select(modals.Post).where(modals.Post.id == post_id))
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    update_data = post_body.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(post, key, value)
+
+    db.commit()
+    return post
+
+
+@app.delete("/api/posts/{post_id}", status_code=status.HTTP_204_NO_CONTENT)
+def post_delete(post_id: int, db: Annotated[Session, Depends(get_db)]):
+    result = db.execute(select(modals.Post).where(modals.Post.id == post_id))
+    post = result.scalars().first()
+    if not post:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
+
+    db.delete(post)
+    db.commit()
 
 
 @app.get("/api/users/{user_id}/posts", response_model=list[PostResponse])
@@ -113,6 +148,61 @@ def get_user(user_id, db: Annotated[Session, Depends(get_db)]):
         return user
 
     raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
+
+
+@app.patch("/api/users/{user_id}", response_model=UserResponse)
+def user_update(
+    user_id: int, user_body: UserUpdate, db: Annotated[Session, Depends(get_db)]
+):
+    result = db.execute(select(modals.User).where(modals.User.id == user_id))
+    user = result.scalars().first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    if user_body.username is not None and user_body.username.lower() != user.username:
+        result = db.execute(
+            select(modals.User).where(
+                modals.User.username == user_body.username.lower()
+            )
+        )
+        if result.scalars().first():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="User Name already exists"
+            )
+
+    if user_body.email is not None and user_body.email.lower() != user.email:
+        result = db.execute(
+            select(modals.User).where(modals.User.email == user_body.email.lower())
+        )
+        if result.scalars().first():
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT, detail="Email already exists"
+            )
+
+    update_user = user_body.model_dump(exclude_unset=True)
+
+    for key, value in update_user.items():
+        setattr(user, key, value.lower())
+
+    db.commit()
+    return user
+
+
+@app.delete("/api/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def user_delete(user_id: int, db: Annotated[Session, Depends(get_db)]):
+    result = db.execute(select(modals.User).where(modals.User.id == user_id))
+    user = result.scalars().first()
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="User not found"
+        )
+
+    db.delete(user)
+    db.commit()
 
 
 ## RequestValidationError Handler
