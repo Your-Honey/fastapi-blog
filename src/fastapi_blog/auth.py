@@ -1,16 +1,19 @@
+import hashlib
+import secrets
 from datetime import UTC, datetime, timedelta
+from typing import Annotated
 
-from fastapi import Depends, HTTPException, status
 import jwt
-
-from fastapi_blog import modals
-from .config import settings
+from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from pwdlib import PasswordHash
-from typing import Annotated
-from .database import get_db
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from fastapi_blog import modals
+
+from .config import settings
+from .database import get_db
 
 password_hash = PasswordHash.recommended()
 
@@ -53,6 +56,12 @@ def verify_access_token(token: str) -> str | None:
         return None
     else:
         return payload.get("sub")
+
+def generate_reset_token() -> str:
+    return secrets.token_urlsafe(32)
+
+def hash_reset_password(token:str) -> str:
+    return hashlib.sha256(token.encode()).hexdigest()
 
 
 async def get_current_user(
