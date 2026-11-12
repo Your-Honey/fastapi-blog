@@ -21,15 +21,15 @@ from fastapi_blog import modals
 from fastapi_blog.database import get_db
 from fastapi_blog.image_utils import delete_profile_image, process_profile_image
 from fastapi_blog.schemas import (
+    ChangePasswordRequest,
     ForgotPasswordRequest,
     PostResponse,
+    ResetPasswordRequest,
     Token,
     UserCreate,
     UserPrivateResponse,
     UserPublicResponse,
     UserUpdate,
-    ResetPasswordRequest,
-    ChangePasswordRequest,
 )
 
 from ..auth import (
@@ -183,7 +183,7 @@ async def reset_password(
             detail="Invalid or expired reset token",
         )
 
-    if reset_token.expires_at.replace(tzinfo=UTC) <= datetime.now(UTC):
+    if reset_token.expires_at <= datetime.now(UTC):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid or expired reset token",

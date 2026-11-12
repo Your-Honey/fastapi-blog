@@ -14,13 +14,11 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from fastapi_blog.routers import posts, users
 
-from .database import Base, engine
+from .database import engine
 
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
     yield
     await engine.dispose()
 

@@ -27,5 +27,7 @@ class Settings(BaseSettings):
     mail_from: str = "noreply@example.com"
     mail_use_tls: bool = True
 
+    database_url: str
+
 
 settings = Settings()  # type: ignore[call-arg] # Loaded from .env file
